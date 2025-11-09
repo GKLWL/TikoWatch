@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Moderator Dashboard | TikoWatch</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">TikoWatch</a>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          {% if current_user.role == 'admin' %}
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_dashboard') }}">Admin Page</a></li>
+          {% endif %}
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container my-5">
+    <h2 class="mb-4 text-center">Moderator Dashboard</h2>
+
+    <!-- Flash Message Block -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="mb-3">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Reports Table -->
+    {% if reports %}
+      <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th>Photo</th>
+              <th>Title</th>
+              <th>Location</th>
+              <th>Date & Time</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in reports %}
+            <tr>
+              <td style="width:120px">
+                {% if r.photo %}
+                  <img src="{{ url_for('static', filename='uploads/' + r.photo) }}" class="img-fluid rounded" alt="photo">
+                {% else %}
+                  <img src="{{ url_for('static', filename='images/default.jpg') }}" class="img-fluid rounded opacity-50" alt="no photo available">
+                {% endif %}
+              </td>
+              <td>{{ r.title }}</td>
+              <td>{{ r.location }}</td>
+              <td>{{ r.datetime.strftime('%Y-%m-%d %H:%M') if r.datetime else 'N/A' }}</td>
+              <td>
+                {% if r.status == 'Pending' %}
+                  <span class="badge bg-warning text-dark">Pending</span>
+                {% elif r.status == 'Approved' %}
+                  <span class="badge bg-success">Approved</span>
+                {% else %}
+                  <span class="badge bg-danger">Rejected</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if r.status == 'Pending' %}
+                  <form action="{{ url_for('approve_report', report_id=r.id) }}" method="POST" style="display:inline;">
+                    <button class="btn btn-success btn-sm">Approve</button>
+                  </form>
+                  <form action="{{ url_for('reject_report', report_id=r.id) }}" method="POST" style="display:inline;">
+                    <button class="btn btn-danger btn-sm">Reject</button>
+                  </form>
+                {% else %}
+                  <button class="btn btn-secondary btn-sm" disabled>No Action</button>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="text-muted text-center">No reports pending approval.</p>
+    {% endif %}
+  </div>
+  
+  <footer class="text-center py-3 text-muted border-top mt-5">
+    &copy; 2025 TikoWatch — Moderator Portal
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

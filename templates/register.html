@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register | TikoWatch</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">TikoWatch</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Login</a></li>
+          <li class="nav-item"><a class="nav-link active" href="{{ url_for('register') }}">Register</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="container mt-3">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Register Form -->
+  <div class="container py-5">
+    <div class="mx-auto shadow-lg p-4 bg-white rounded-4" style="max-width: 420px;">
+      <h2 class="text-center mb-4 fw-semibold">
+        <i class="bi bi-person-plus-fill text-primary"></i> Create an Account
+      </h2>
+
+      <form method="POST" novalidate onsubmit="return validatePassword();">
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <div class="input-group">
+            <input type="password" name="password" id="password" class="form-control" required>
+            <button class="btn btn-outline-secondary" type="button" id="togglePassword" aria-label="Show or hide password">
+              <i class="bi bi-eye"></i>
+            </button>
+          </div>
+          <div class="form-text">Must contain at least 8 characters, a number, and a capital letter.</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Confirm Password</label>
+          <div class="input-group">
+            <input type="password" name="confirm" id="confirmPassword" class="form-control" required>
+            <button class="btn btn-outline-secondary" type="button" id="toggleConfirm" aria-label="Show or hide password confirmation">
+              <i class="bi bi-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="mb-3 position-relative">
+          <label class="form-label fw-semibold">Password</label>
+          <div class="input-group">
+            <input type="password" id="password" name="password" class="form-control"
+                   placeholder="Enter password"
+                   pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,}"
+                   title="Must contain at least 8 characters, including uppercase, lowercase, number, and special character"
+                   required>
+            <button class="btn btn-outline-secondary" type="button" onclick="togglePassword()">
+              <i class="bi bi-eye" id="toggleIcon"></i>
+            </button>
+          </div>
+          <div class="form-text">
+            Password must be at least <strong>8 characters</strong> and include:
+            an uppercase letter, a lowercase letter, a number, and a special character.
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label fw-semibold">Confirm Password</label>
+          <input type="password" id="confirm" name="confirm" class="form-control" placeholder="Re-enter password" required>
+        </div>
+
+        <div id="passwordAlert" class="alert alert-danger py-2 d-none" role="alert"></div>
+
+        <button type="submit" class="btn btn-primary w-100">
+          <i class="bi bi-person-check"></i> Register
+        </button>
+      </form>
+
+      <p class="text-center mt-4 text-muted">
+        Already have an account?
+        <a href="{{ url_for('login') }}" class="text-decoration-none">Login here</a>.
+      </p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="text-center py-3 text-muted border-top mt-5">
+    &copy; 2025 TikoWatch — Community Watch for a Safer Singapore
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{{ url_for('static', filename='js/register.js') }}"></script>
+</body>
+</html>

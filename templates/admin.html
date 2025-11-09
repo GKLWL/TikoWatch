@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard | TikoWatch</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">TikoWatch</a>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('moderator_dashboard') }}">Moderator Page</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_reports') }}">Manage Reports</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container my-5">
+    <h2 class="text-center mb-4">Admin Dashboard</h2>
+
+    <!-- STEP 3: Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="mb-3">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- User Management Table -->
+    <div class="card shadow-sm">
+      <div class="card-header bg-dark text-white">
+        <h5 class="mb-0">User Management</h5>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-striped table-hover align-middle">
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Role</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for user in users %}
+              <tr>
+                <td>{{ user.username }}</td>
+                <td>
+                  {% if user.role == 'admin' %}
+                    <span class="badge bg-danger">Admin</span>
+                  {% elif user.role == 'moderator' %}
+                    <span class="badge bg-success">Moderator</span>
+                  {% else %}
+                    <span class="badge bg-secondary">Member</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <!-- STEP 2: Disable self-actions -->
+                  {% if user.username != current_user.username %}
+                    {% if user.role == 'member' %}
+                      <form action="{{ url_for('promote_user', username=user.username) }}" method="POST" style="display:inline;">
+                        <button class="btn btn-success btn-sm">Promote to Moderator</button>
+                      </form>
+                    {% elif user.role == 'moderator' %}
+                      <form action="{{ url_for('demote_user', username=user.username) }}" method="POST" style="display:inline;">
+                        <button class="btn btn-warning btn-sm">Demote to Member</button>
+                      </form>
+                    {% endif %}
+
+                    {% if user.role != 'admin' %}
+                      <form action="{{ url_for('delete_user', username=user.username) }}" method="POST" style="display:inline;">
+                        <button class="btn btn-danger btn-sm">Remove</button>
+                      </form>
+                    {% endif %}
+                  {% else %}
+                    <span class="text-muted fst-italic">Current user</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center py-3 text-muted border-top mt-5">
+    &copy; 2025 TikoWatch — Admin Portal
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

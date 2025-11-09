@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login | TikoWatch</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+
+<body class="bg-light">
+
+  <!-- Close button (X) -->
+  <div class="container mt-3">
+    <div class="d-flex justify-content-end">
+      <a href="{{ url_for('index') }}" class="btn-close" aria-label="Close"></a>
+    </div>
+  </div>
+
+  <!-- Flash Messages -->
+  <div class="container mt-3">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <!-- Login Form -->
+  <div class="container py-4">
+    <div class="mx-auto bg-white p-4 rounded shadow-sm" style="max-width: 400px;">
+      <h2 class="text-center mb-4">Login to TikoWatch</h2>
+
+      <form method="POST" novalidate>
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          <input type="text" name="username" class="form-control" required autofocus>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <div class="input-group">
+            <input type="password" name="password" id="password" class="form-control" required aria-describedby="togglePassword">
+            <button class="btn btn-outline-secondary" type="button" id="togglePassword" aria-label="Show or hide password">
+              <i class="bi bi-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-dark w-100">Login</button>
+        <p class="text-center mt-3 text-muted small">Demo login: <strong>admin / password</strong></p>
+      </form>
+
+      <p class="text-center mt-3">
+        Don’t have an account? <a href="{{ url_for('register') }}">Register here</a>.
+      </p>
+    </div>
+  </div>
+
+    <footer class="text-center py-3 text-muted border-top mt-5">
+      &copy; 2025 TikoWatch — Community Watch for a Safer Singapore
+    </footer>
+
+    <!-- JS Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
+  </body>
+  </html>
