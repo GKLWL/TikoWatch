@@ -495,4 +495,5 @@ def delete_report_image(mapper, connection, target):
             app.logger.warning(f"Could not delete file {target.photo}: {e}")
         
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
+
